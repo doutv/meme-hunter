@@ -1,4 +1,4 @@
-import { gpt4o } from "../utils/model";
+import { gpt4oMini } from "../utils/model";
 import { agentKit } from "../utils/solanaAgent";
 import { solanaAgentState } from "../utils/state";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
@@ -34,7 +34,7 @@ const swapPrompt = ChatPromptTemplate.fromMessages([
 
 const swapAgent = createReactAgent({
   stateModifier: swapPrompt,
-  llm: gpt4o,
+  llm: gpt4oMini,
   tools: [new SolanaTransferTool(agentKit), swapTool],
 });
 

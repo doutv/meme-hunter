@@ -1,5 +1,5 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { gpt4o } from "../utils/model";
+import { gpt4oMini } from "../utils/model";
 import { solanaAgentState } from "../utils/state";
 import { agentKit } from "../utils/solanaAgent";
 import {
@@ -8,7 +8,7 @@ import {
 } from "solana-agent-kit/dist/langchain";
 
 const readAgent = createReactAgent({
-  llm: gpt4o,
+  llm: gpt4oMini,
   tools: [new SolanaBalanceTool(agentKit), new SolanaFetchPriceTool(agentKit)],
 });
 
