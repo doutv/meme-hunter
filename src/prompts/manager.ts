@@ -10,9 +10,6 @@ export const parser = StructuredOutputParser.fromZodSchema(
     isSolanaWriteQuery: z
       .boolean()
       .describe("Query requires writing/modifying data on Solana blockchain"),
-    isGeneralQuery: z
-      .boolean()
-      .describe("Query is about non-blockchain topics"),
   }),
 );
 
@@ -38,10 +35,6 @@ export const prompt = PromptTemplate.fromTemplate(
       * Minting NFTs
       * Creating accounts
       * Any transaction that modifies blockchain state
-    - General queries include: 
-      * Non-blockchain topics
-      * Internet searches
-      * General knowledge questions
 
     \n {messages} \n
     `,

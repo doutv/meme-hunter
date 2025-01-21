@@ -17,9 +17,4 @@ export const solanaAgentState = Annotation.Root({
     reducer: (x, y) => y ?? x ?? false,
     default: () => false,
   }),
-
-  isGeneralQuery: Annotation<boolean>({
-    reducer: (x, y) => y ?? x ?? false,
-    default: () => false,
-  }),
 });

@@ -13,11 +13,10 @@ export const managerNode = async (state: typeof solanaAgentState.State) => {
     messages: messages,
   });
 
-  const { isSolanaReadQuery, isSolanaWriteQuery, isGeneralQuery } = result;
+  const { isSolanaReadQuery, isSolanaWriteQuery } = result;
 
   return {
     isSolanaReadQuery,
     isSolanaWriteQuery,
-    isGeneralQuery,
   };
 };
