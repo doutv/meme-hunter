@@ -4,7 +4,7 @@ import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
 
 export const swapTool = tool(
-  async ({ outputMint, inputAmount, inputMint, inputDecimal }) => {
+  async ({ outputMint, inputAmount, inputMint, inputDecimal, slippageBps }) => {
     try {
       const inputAmountWithDecimals = inputAmount * 10 ** inputDecimal;
       const outputMintAddress = new PublicKey(outputMint);
@@ -15,7 +15,7 @@ export const swapTool = tool(
         outputMintAddress,
         inputAmountWithDecimals,
         inputMintAddress,
-        200,
+        slippageBps,
       );
       return tx;
     } catch (error) {
@@ -40,6 +40,10 @@ export const swapTool = tool(
       inputDecimal: z
         .number()
         .describe("The decimal of the input token that is being traded"),
+      slippageBps: z
+        .number()
+        .describe("The maximum slippage tolerance in basis points (100 = 1%)"),
     }),
   },
 );
+
