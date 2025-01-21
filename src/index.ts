@@ -14,31 +14,30 @@ export const graph = workflow.compile();
 // Create readline interface
 import * as readline from 'readline';
 
-const rl = readline.createInterface({
+export const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-// Function to handle chat interaction
-async function chat() {
-  while (true) {
-    const userInput = await new Promise<string>((resolve) => {
-      rl.question('You: ', resolve);
-    });
-
-    if (userInput.toLowerCase() === 'exit') {
-      rl.close();
-      break;
-    }
-
-    const result = await graph.invoke({
-      messages: [new HumanMessage(userInput)],
-    });
-
-    console.log('Assistant:', result);
-  }
-}
-
 // Start the chat
 console.log('Chat with me! (type "exit" to quit)');
-chat().catch(console.error);
+while (true) {
+  const userInput = await new Promise<string>((resolve) => {
+    rl.question('You: ', resolve);
+  });
+
+  if (userInput.toLowerCase() === 'exit') {
+    rl.close();
+    break;
+  }
+
+  const stream = await graph.stream({
+    messages: [new HumanMessage(userInput)],
+  });
+
+  for await (const event of stream) {
+    const recentMsg = event.messages[event.messages.length - 1];
+    console.log(`================================ ${recentMsg._getType()} Message (1) =================================`)
+    console.log(recentMsg.content);
+  }
+}

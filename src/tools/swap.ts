@@ -2,23 +2,20 @@ import { agentKit } from "../utils/solanaAgent";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
+import { rl } from "../index";
 
 export const swapTool = tool(
-  async ({ outputMint, inputAmount, inputMint, inputDecimal, slippageBps }) => {
+  async ({ outputMint, inputAmount, inputMint, slippageBps }) => {
     try {
-      const inputAmountWithDecimals = inputAmount * 10 ** inputDecimal;
       const outputMintAddress = new PublicKey(outputMint);
       const inputMintAddress = new PublicKey(inputMint);
 
-      console.log(inputAmountWithDecimals, outputMintAddress, inputMintAddress);
+      console.log(inputAmount, outputMintAddress, inputMintAddress);
       
-      // Add confirmation prompt
       const confirmation = await new Promise(resolve => {
-        console.log(`\nReady to swap ${inputAmount} tokens from ${inputMint} to ${outputMint}`);
-        console.log(`Please confirm the trade (yes/no):`);
-        
-        process.stdin.once('data', data => {
-          resolve(data.toString().trim().toLowerCase() === 'yes');
+        rl.question(`\nReady to swap ${inputAmount} tokens from ${inputMint} to ${outputMint}. Please confirm the trade (yes/no): `, answer => {
+          rl.close();
+          resolve(answer.trim().toLowerCase() === 'yes');
         });
       });
 
@@ -28,7 +25,7 @@ export const swapTool = tool(
 
       const tx = await agentKit.trade(
         outputMintAddress,
-        inputAmountWithDecimals,
+        inputAmount,
         inputMintAddress,
         slippageBps,
       );
@@ -41,7 +38,7 @@ export const swapTool = tool(
   {
     name: "swap",
     description:
-      "call to swap/trade tokens from one token to the other using Jupiter exchange",
+      "Swap tokens from one token to the other using Jupiter exchange",
     schema: z.object({
       outputMint: z
         .string()
@@ -49,12 +46,9 @@ export const swapTool = tool(
       inputAmount: z
         .number()
         .describe(
-          "the input amount of the token to be swapped without adding any decimals",
+          "the input amount of the token to be swapped in decimals",
         ),
-      inputMint: z.string().describe("The mint address of the origin token "),
-      inputDecimal: z
-        .number()
-        .describe("The decimal of the input token that is being traded"),
+      inputMint: z.string().describe("The mint address of the origin token"),
       slippageBps: z
         .number()
         .describe("The maximum slippage tolerance in basis points (100 = 1%)"),
