@@ -1,20 +1,13 @@
 import { GraphBubbleUp, StateGraph } from "@langchain/langgraph";
 import { solanaAgentState } from "./utils/state";
 import { swapNode } from "./agents/swap";
-import { managerNode } from "./agents/manager";
-import { readNode } from "./agents/readAgent";
 import { START, END } from "@langchain/langgraph";
-import { managerRouter } from "./utils/route";
 import { HumanMessage } from "@langchain/core/messages";
 
 const workflow = new StateGraph(solanaAgentState)
-  .addNode("manager", managerNode)
   .addNode("swap", swapNode)
-  .addNode("read", readNode)
-  .addEdge(START, "manager")
-  .addConditionalEdges("manager", managerRouter)
-  .addEdge("swap", END)
-  .addEdge("read", END);
+  .addEdge(START, "swap")
+  .addEdge("swap", END);
 
 export const graph = workflow.compile();
 

@@ -11,6 +11,21 @@ export const swapTool = tool(
       const inputMintAddress = new PublicKey(inputMint);
 
       console.log(inputAmountWithDecimals, outputMintAddress, inputMintAddress);
+      
+      // Add confirmation prompt
+      const confirmation = await new Promise(resolve => {
+        console.log(`\nReady to swap ${inputAmount} tokens from ${inputMint} to ${outputMint}`);
+        console.log(`Please confirm the trade (yes/no):`);
+        
+        process.stdin.once('data', data => {
+          resolve(data.toString().trim().toLowerCase() === 'yes');
+        });
+      });
+
+      if (!confirmation) {
+        return "Trade cancelled by user";
+      }
+
       const tx = await agentKit.trade(
         outputMintAddress,
         inputAmountWithDecimals,
